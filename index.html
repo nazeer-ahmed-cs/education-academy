@@ -214,6 +214,17 @@ section{padding:100px 0;position:relative}
 .resource-card h3{font-size:18px;font-family:var(--font);font-weight:700;margin-bottom:8px}
 .resource-card p{font-size:14px;color:var(--muted)}
 
+/* ─── Vocabulary Course ─── */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+.vocab-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .4s}
+.vocab-card:hover{transform:translateY(-4px);border-color:rgba(245,166,35,0.2);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.vocab-vid-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.vocab-vid-wrap video,.vocab-vid-wrap iframe{width:100%;height:100%;border:none;display:block;object-fit:cover;background:#000}
+.vocab-body{padding:16px 20px 20px}
+.vocab-body h3{font-size:17px;font-weight:700;margin-bottom:4px}
+.vocab-body p{font-size:13px;color:var(--muted);line-height:1.6}
+.vocab-badge{display:inline-block;padding:3px 12px;border-radius:100px;background:rgba(74,222,128,0.12);color:#4ade80;font-size:11px;font-weight:600;border:1px solid rgba(74,222,128,0.2);margin-top:8px}
+
 /* ─── Testimonials ─── */
 .test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
 .test-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;transition:all .4s}
@@ -308,6 +319,7 @@ footer{background:#061209;
       <li><a href="#about">About</a></li>
       <li><a href="#faculty">Faculty</a></li>
       <li><a href="#resources">Resources</a></li>
+      <li><a href="#vocab">Vocabulary</a></li>
       <li><a href="#stories">Stories</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -326,6 +338,7 @@ footer{background:#061209;
     <li><a href="#about">About</a></li>
     <li><a href="#faculty">Faculty</a></li>
     <li><a href="#resources">Resources</a></li>
+    <li><a href="#vocab">Vocabulary</a></li>
     <li><a href="#stories">Stories</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -504,6 +517,77 @@ footer{background:#061209;
   </div>
 </section>
 
+<!-- Vocabulary Course -->
+<section id="vocab" style="background:var(--bg2)">
+  <div class="container">
+    <span class="section-label reveal">Video Lectures</span>
+    <h2 class="section-title reveal">Vocabulary Course</h2>
+    <p class="section-desc reveal">Build a powerful vocabulary with our structured video lecture series. Each lesson covers word roots, meanings, usage, and practice exercises.</p>
+    <div class="vocab-grid">
+      <div class="vocab-card reveal">
+        <div class="vocab-vid-wrap">
+          <video controls preload="metadata">
+            <source src="videos/GENERAL INTRODUCTION TO VOCABULARY, SYNONYM, ANTONYM AND CONTEXT.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="vocab-body">
+          <h3>General Introduction</h3>
+          <p>Introduction to vocabulary, synonyms, antonyms and context — the foundation for exam success.</p>
+          <span class="vocab-badge">&#128218; Beginner</span>
+        </div>
+      </div>
+      <div class="vocab-card reveal">
+        <div class="vocab-vid-wrap">
+          <video controls preload="metadata">
+            <source src="videos/WORDS 1-25.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="vocab-body">
+          <h3>Words 1–25</h3>
+          <p>First set of 25高频 vocabulary words with meanings, synonyms, and usage examples.</p>
+          <span class="vocab-badge">&#128218; Beginner</span>
+        </div>
+      </div>
+      <div class="vocab-card reveal">
+        <div class="vocab-vid-wrap">
+          <video controls preload="metadata">
+            <source src="videos/WORDS 51-75.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="vocab-body">
+          <h3>Words 51–75</h3>
+          <p>Third set covering words 51–75 with detailed explanations and practice examples.</p>
+          <span class="vocab-badge">&#127891; Intermediate</span>
+        </div>
+      </div>
+      <div class="vocab-card reveal">
+        <div class="vocab-vid-wrap">
+          <video controls preload="metadata">
+            <source src="videos/WORDS 76-100.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="vocab-body">
+          <h3>Words 76–100</h3>
+          <p>Fourth set of 25 words — expand your vocabulary for competitive exams.</p>
+          <span class="vocab-badge">&#127891; Intermediate</span>
+        </div>
+      </div>
+      <div class="vocab-card reveal">
+        <div class="vocab-vid-wrap">
+          <video controls preload="metadata">
+            <source src="videos/WORDS 101-125.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="vocab-body">
+          <h3>Words 101–125</h3>
+          <p>Fifth set covering words 101–125 to build a strong exam-ready vocabulary.</p>
+          <span class="vocab-badge">&#127891; Advanced</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Testimonials -->
 <section id="testimonials" style="background:var(--bg2)">
   <div class="container">
@@ -618,6 +702,7 @@ footer{background:#061209;
         <ul>
           <li><a href="#hero">Home</a></li>
           <li><a href="#services">Services</a></li>
+          <li><a href="#vocab">Vocabulary</a></li>
           <li><a href="#exam">Test Prep</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
