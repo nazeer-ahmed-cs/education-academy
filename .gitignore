@@ -1,6 +1,4 @@
-# Videos (large files — host separately)
-videos/
-*.mp4
+# Videos (tracked via Git LFS — .mp4 only)
 *.mkv
 *.avi
 *.mov
