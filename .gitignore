@@ -1,4 +1,6 @@
-# Videos (tracked via Git LFS — .mp4 only)
+# Videos
+videos/
+*.mp4
 *.mkv
 *.avi
 *.mov
