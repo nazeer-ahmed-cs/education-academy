@@ -1,27 +1,4 @@
-# Videos
-videos/
-*.mp4
-*.mkv
-*.avi
-*.mov
-*.webm
-
-# Python
 __pycache__/
 *.pyc
-*.pyo
-*.egg-info/
-dist/
-build/
-
-# OS
 .DS_Store
-Thumbs.db
-desktop.ini
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+*.log
