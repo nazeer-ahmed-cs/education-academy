@@ -234,17 +234,17 @@ section{padding:100px 0;position:relative}
 .note-item{
   display:flex;align-items:flex-start;gap:14px;
   padding:14px 16px;border-radius:12px;
-  background:rgba(255,255,255,0.03);
+  background:var(--card);
   border:1px solid var(--border);
   margin-bottom:10px;
   transition:all .3s;
 }
 .note-item:last-child{margin-bottom:0}
 .note-item:hover{
-  background:rgba(245,166,35,0.06);
-  border-color:rgba(245,166,35,0.2);
+  background:var(--card);
+  border-color:rgba(245,166,35,0.25);
   transform:translateX(4px);
-  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);
 }
 .note-icon{font-size:32px;flex-shrink:0;line-height:1;margin-top:2px}
 .note-info{flex:1;min-width:0}
@@ -269,8 +269,8 @@ section{padding:100px 0;position:relative}
   background:var(--accent2);transform:translateY(-2px);
   box-shadow:0 4px 15px rgba(245,166,35,0.35);
 }
-.note-dl-btn.coming{background:rgba(255,255,255,0.08);color:var(--muted);pointer-events:none;cursor:default}
-.note-dl-btn.coming:hover{background:rgba(255,255,255,0.08);transform:none;box-shadow:none}
+.note-dl-btn.coming{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border);pointer-events:none;cursor:default}
+.note-dl-btn.coming:hover{background:rgba(255,255,255,0.04);transform:none;box-shadow:none}
 @media(max-width:768px){
   #studyNotesCard{padding:24px 18px}
   .note-item{flex-wrap:wrap;gap:10px;padding:12px 14px}
