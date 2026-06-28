@@ -213,51 +213,77 @@ section{padding:100px 0;position:relative}
 .resource-icon{font-size:40px;margin-bottom:12px}
 .resource-card h3{font-size:18px;font-family:var(--font);font-weight:700;margin-bottom:8px}
 .resource-card p{font-size:14px;color:var(--muted);margin-bottom:4px}
-.resource-card .notes-container{margin-top:16px;text-align:left;border-top:1px solid var(--border);padding-top:14px}
-.resource-card .notes-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;font-weight:600}
-.resource-card .note-item{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 12px;border-radius:10px;
+/* ─── Study Notes Card (full-width, scrollable) ─── */
+#studyNotesCard{grid-column:1/-1;text-align:left;padding:28px 28px 32px}
+#studyNotesCard .resource-icon{text-align:center}
+#studyNotesCard h3{text-align:center}
+#studyNotesCard > p{text-align:center}
+.notes-container{
+  margin-top:18px;
+  border-top:1px solid var(--border);
+  padding-top:16px;
+  max-height:520px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--accent) transparent;
+}
+.notes-container::-webkit-scrollbar{width:4px}
+.notes-container::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+.notes-container::-webkit-scrollbar-track{background:transparent}
+.notes-label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:12px;font-weight:600}
+.note-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 16px;border-radius:12px;
   background:rgba(255,255,255,0.03);
   border:1px solid var(--border);
-  margin-bottom:8px;
+  margin-bottom:10px;
   transition:all .3s;
-  cursor:default;
 }
-.resource-card .note-item:last-child{margin-bottom:0}
-.resource-card .note-item:hover{
+.note-item:last-child{margin-bottom:0}
+.note-item:hover{
   background:rgba(245,166,35,0.06);
   border-color:rgba(245,166,35,0.2);
   transform:translateX(4px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
 }
-.resource-card .note-icon{font-size:24px;flex-shrink:0;line-height:1}
-.resource-card .note-info{flex:1;min-width:0}
-.resource-card .note-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
-.resource-card .note-subject{font-size:11px;color:var(--accent);font-weight:500;margin-top:1px}
-.resource-card .note-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
-.resource-card .note-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.resource-card .note-type{
-  display:inline-block;padding:2px 8px;border-radius:6px;
-  font-size:10px;font-weight:600;letter-spacing:0.3px;
+.note-icon{font-size:32px;flex-shrink:0;line-height:1;margin-top:2px}
+.note-info{flex:1;min-width:0}
+.note-title{font-size:15px;font-weight:600;color:var(--text);line-height:1.4;word-wrap:break-word}
+.note-category{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:100px;background:rgba(245,166,35,0.12);color:var(--accent);font-size:11px;font-weight:500}
+.note-desc{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.5}
+.note-meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;margin-left:12px}
+.note-type{
+  display:inline-block;padding:3px 10px;border-radius:6px;
+  font-size:10px;font-weight:700;letter-spacing:0.5px;
   background:rgba(245,166,35,0.12);color:var(--accent);
 }
-.resource-card .note-type.docx{background:rgba(52,211,153,0.12);color:#34d399}
-.resource-card .note-dl-btn{
-  display:inline-flex;align-items:center;gap:4px;
-  padding:6px 12px;border-radius:8px;
+.note-type.docx{background:rgba(52,211,153,0.12);color:#34d399}
+.note-dl-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:8px;
   background:var(--accent);color:var(--bg);
-  font-size:11px;font-weight:600;text-decoration:none;
+  font-size:12px;font-weight:600;text-decoration:none;
   transition:all .3s;font-family:var(--font);white-space:nowrap;
 }
-.resource-card .note-dl-btn:hover{
-  background:var(--accent2);transform:translateY(-1px);
-  box-shadow:0 4px 15px rgba(245,166,35,0.3);
+.note-dl-btn:hover{
+  background:var(--accent2);transform:translateY(-2px);
+  box-shadow:0 4px 15px rgba(245,166,35,0.35);
 }
-.resource-card .note-dl-btn.coming{background:rgba(255,255,255,0.08);color:var(--muted);pointer-events:none}
-.resource-card .note-dl-btn.coming:hover{background:rgba(255,255,255,0.08);transform:none;box-shadow:none}
+.note-dl-btn.coming{background:rgba(255,255,255,0.08);color:var(--muted);pointer-events:none;cursor:default}
+.note-dl-btn.coming:hover{background:rgba(255,255,255,0.08);transform:none;box-shadow:none}
+@media(max-width:768px){
+  #studyNotesCard{padding:24px 18px}
+  .note-item{flex-wrap:wrap;gap:10px;padding:12px 14px}
+  .note-meta{flex-direction:row;width:100%;margin-left:0;justify-content:flex-end}
+  .notes-container{max-height:400px}
+}
 @media(max-width:480px){
-  .resource-card .note-item{flex-wrap:wrap;gap:8px}
-  .resource-card .note-meta{width:100%;justify-content:flex-start}
+  #studyNotesCard{padding:20px 14px}
+  .note-icon{font-size:26px}
+  .note-title{font-size:14px}
+  .note-desc{font-size:12px}
+  .note-meta{flex-wrap:wrap;gap:6px}
+  .note-dl-btn{padding:6px 12px;font-size:11px}
 }
 
 /* ─── Vocabulary Course ─── */
@@ -849,51 +875,52 @@ form.addEventListener('submit',async(e)=>{
 });
 
 // ─── Study Notes Data ───
+// Add new notes here — each entry creates one note card
 const studyNotes = [
   {
     title: 'Junior Office Associate (BPS-13)',
-    subject: 'BPS 5–15 Exams',
-    desc: 'Complete notes covering all topics for Junior Office Associate (BPS-13) exams in Sindh.',
+    category: 'BPS 5–15 Exams',
+    description: 'Complete notes covering all topics for Junior Office Associate (BPS-13) exams in Sindh.',
     file: 'notes/junior-office-associate-bps13-notes.pdf',
     type: 'PDF',
     coming: false
   },
   {
     title: 'English Grammar Notes',
-    subject: 'English',
-    desc: 'Comprehensive English grammar guide covering tenses, parts of speech, and sentence structure.',
+    category: 'English',
+    description: 'Comprehensive English grammar guide covering tenses, parts of speech, and sentence structure.',
     file: '',
     type: 'PDF',
     coming: true
   },
   {
     title: 'Computer Science Notes',
-    subject: 'Computer Science',
-    desc: 'Core computer science concepts including programming, data structures, and algorithms.',
+    category: 'Computer Science',
+    description: 'Core computer science concepts including programming, data structures, and algorithms.',
     file: '',
     type: 'PDF',
     coming: true
   },
   {
     title: 'Database Management System Notes',
-    subject: 'DBMS',
-    desc: 'Database fundamentals: SQL, normalization, ER diagrams, and transaction management.',
+    category: 'DBMS',
+    description: 'Database fundamentals: SQL, normalization, ER diagrams, and transaction management.',
     file: '',
     type: 'PDF',
     coming: true
   },
   {
     title: 'Software Engineering Notes',
-    subject: 'Software Engineering',
-    desc: 'SDLC, requirements engineering, design patterns, testing, and project management.',
+    category: 'Software Engineering',
+    description: 'SDLC, requirements engineering, design patterns, testing, and project management.',
     file: '',
     type: 'PDF',
     coming: true
   },
   {
     title: 'Programming Fundamentals Notes',
-    subject: 'Programming',
-    desc: 'Programming basics: variables, loops, functions, OOP, and problem-solving techniques.',
+    category: 'Programming',
+    description: 'Programming basics: variables, loops, functions, OOP, and problem-solving techniques.',
     file: '',
     type: 'PDF',
     coming: true
@@ -915,8 +942,8 @@ function renderStudyNotes() {
         <span class="note-icon">📘</span>
         <div class="note-info">
           <div class="note-title">${note.title}</div>
-          <div class="note-subject">${note.subject}</div>
-          <div class="note-desc">${note.desc}</div>
+          <span class="note-category">${note.category}</span>
+          <div class="note-desc">${note.description}</div>
         </div>
         <div class="note-meta">
           <span class="${typeClass}">${note.type}</span>
