@@ -212,9 +212,53 @@ section{padding:100px 0;position:relative}
 .resource-card:hover{transform:translateY(-4px);border-color:rgba(245,166,35,0.2)}
 .resource-icon{font-size:40px;margin-bottom:12px}
 .resource-card h3{font-size:18px;font-family:var(--font);font-weight:700;margin-bottom:8px}
-.resource-card p{font-size:14px;color:var(--muted)}
-.resource-card .download-btn{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:100px;background:var(--accent);color:var(--bg);font-size:12px;font-weight:600;text-decoration:none;transition:all .3s;font-family:var(--font)}
-.resource-card .download-btn:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 4px 15px rgba(245,166,35,0.3)}
+.resource-card p{font-size:14px;color:var(--muted);margin-bottom:4px}
+.resource-card .notes-container{margin-top:16px;text-align:left;border-top:1px solid var(--border);padding-top:14px}
+.resource-card .notes-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;font-weight:600}
+.resource-card .note-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  margin-bottom:8px;
+  transition:all .3s;
+  cursor:default;
+}
+.resource-card .note-item:last-child{margin-bottom:0}
+.resource-card .note-item:hover{
+  background:rgba(245,166,35,0.06);
+  border-color:rgba(245,166,35,0.2);
+  transform:translateX(4px);
+}
+.resource-card .note-icon{font-size:24px;flex-shrink:0;line-height:1}
+.resource-card .note-info{flex:1;min-width:0}
+.resource-card .note-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.resource-card .note-subject{font-size:11px;color:var(--accent);font-weight:500;margin-top:1px}
+.resource-card .note-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
+.resource-card .note-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.resource-card .note-type{
+  display:inline-block;padding:2px 8px;border-radius:6px;
+  font-size:10px;font-weight:600;letter-spacing:0.3px;
+  background:rgba(245,166,35,0.12);color:var(--accent);
+}
+.resource-card .note-type.docx{background:rgba(52,211,153,0.12);color:#34d399}
+.resource-card .note-dl-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:6px 12px;border-radius:8px;
+  background:var(--accent);color:var(--bg);
+  font-size:11px;font-weight:600;text-decoration:none;
+  transition:all .3s;font-family:var(--font);white-space:nowrap;
+}
+.resource-card .note-dl-btn:hover{
+  background:var(--accent2);transform:translateY(-1px);
+  box-shadow:0 4px 15px rgba(245,166,35,0.3);
+}
+.resource-card .note-dl-btn.coming{background:rgba(255,255,255,0.08);color:var(--muted);pointer-events:none}
+.resource-card .note-dl-btn.coming:hover{background:rgba(255,255,255,0.08);transform:none;box-shadow:none}
+@media(max-width:480px){
+  .resource-card .note-item{flex-wrap:wrap;gap:8px}
+  .resource-card .note-meta{width:100%;justify-content:flex-start}
+}
 
 /* ─── Vocabulary Course ─── */
 .vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
@@ -514,7 +558,14 @@ footer{background:#061209;
     <div class="resources-grid">
       <div class="resource-card reveal"><div class="resource-icon">📄</div><h3>Past Papers</h3><p>Solved and unsolved past papers for CSS, PMS, FPSC, SPSC, PPSC, and NTS.</p></div>
       <div class="resource-card reveal"><div class="resource-icon">❓</div><h3>MCQs Bank</h3><p>Thousands of practice MCQs covering all subjects with detailed explanations.</p></div>
-      <div class="resource-card reveal"><div class="resource-icon">📘</div><h3>Study Notes</h3><p>Concise and well-organized notes prepared by subject matter experts.</p><a href="notes/junior-office-associate-bps13-notes.pdf" download class="download-btn">⬇ Download Junior Office Associate (BPS-13) Notes</a></div>
+      <div class="resource-card reveal" id="studyNotesCard">
+        <div class="resource-icon">📘</div>
+        <h3>Study Notes</h3>
+        <p>Concise and well-organized notes prepared by subject matter experts.</p>
+        <div class="notes-container" id="notesContainer">
+          <!-- Notes rendered by JavaScript -->
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -796,6 +847,86 @@ form.addEventListener('submit',async(e)=>{
   submitBtn.disabled = false;
   submitBtn.textContent = 'Send Message';
 });
+
+// ─── Study Notes Data ───
+const studyNotes = [
+  {
+    title: 'Junior Office Associate (BPS-13)',
+    subject: 'BPS 5–15 Exams',
+    desc: 'Complete notes covering all topics for Junior Office Associate (BPS-13) exams in Sindh.',
+    file: 'notes/junior-office-associate-bps13-notes.pdf',
+    type: 'PDF',
+    coming: false
+  },
+  {
+    title: 'English Grammar Notes',
+    subject: 'English',
+    desc: 'Comprehensive English grammar guide covering tenses, parts of speech, and sentence structure.',
+    file: '',
+    type: 'PDF',
+    coming: true
+  },
+  {
+    title: 'Computer Science Notes',
+    subject: 'Computer Science',
+    desc: 'Core computer science concepts including programming, data structures, and algorithms.',
+    file: '',
+    type: 'PDF',
+    coming: true
+  },
+  {
+    title: 'Database Management System Notes',
+    subject: 'DBMS',
+    desc: 'Database fundamentals: SQL, normalization, ER diagrams, and transaction management.',
+    file: '',
+    type: 'PDF',
+    coming: true
+  },
+  {
+    title: 'Software Engineering Notes',
+    subject: 'Software Engineering',
+    desc: 'SDLC, requirements engineering, design patterns, testing, and project management.',
+    file: '',
+    type: 'PDF',
+    coming: true
+  },
+  {
+    title: 'Programming Fundamentals Notes',
+    subject: 'Programming',
+    desc: 'Programming basics: variables, loops, functions, OOP, and problem-solving techniques.',
+    file: '',
+    type: 'PDF',
+    coming: true
+  }
+];
+
+function renderStudyNotes() {
+  const container = document.getElementById('notesContainer');
+  if (!container) return;
+  let html = '<div class="notes-label">Available Notes</div>';
+  studyNotes.forEach(note => {
+    const btnClass = note.coming ? 'note-dl-btn coming' : 'note-dl-btn';
+    const btnHref = note.coming ? '#' : note.file;
+    const btnText = note.coming ? 'Coming Soon' : '⬇ Download';
+    const btnDownload = note.coming ? '' : 'download';
+    const typeClass = note.type === 'DOCX' ? 'note-type docx' : 'note-type';
+    html += `
+      <div class="note-item">
+        <span class="note-icon">📘</span>
+        <div class="note-info">
+          <div class="note-title">${note.title}</div>
+          <div class="note-subject">${note.subject}</div>
+          <div class="note-desc">${note.desc}</div>
+        </div>
+        <div class="note-meta">
+          <span class="${typeClass}">${note.type}</span>
+          <a href="${btnHref}" ${btnDownload} class="${btnClass}">${btnText}</a>
+        </div>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+renderStudyNotes();
 </script>
 </body>
 </html>
