@@ -271,6 +271,75 @@ section{padding:100px 0;position:relative}
 }
 .note-dl-btn.coming{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border);pointer-events:none;cursor:default}
 .note-dl-btn.coming:hover{background:rgba(255,255,255,0.04);transform:none;box-shadow:none}
+
+/* ─── MCQs Card ─── */
+#mcqsCard{grid-column:1/-1;text-align:left;padding:28px 28px 32px}
+#mcqsCard .resource-icon{text-align:center}
+#mcqsCard h3{text-align:center}
+#mcqsCard > p{text-align:center}
+.mcqs-container{
+  margin-top:18px;
+  border-top:1px solid var(--border);
+  padding-top:16px;
+  max-height:600px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--accent) transparent;
+}
+.mcqs-container::-webkit-scrollbar{width:4px}
+.mcqs-container::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+.mcqs-container::-webkit-scrollbar-track{background:transparent}
+.mcqs-label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:12px;font-weight:600}
+.mcq-item{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;margin-bottom:14px;transition:all .3s;
+}
+.mcq-item:last-child{margin-bottom:0}
+.mcq-item:hover{border-color:rgba(245,166,35,0.2)}
+.mcq-question{
+  font-size:14px;font-weight:600;color:var(--text);
+  line-height:1.6;margin-bottom:12px;
+}
+.mcq-options{display:flex;flex-direction:column;gap:8px}
+.mcq-option{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  cursor:pointer;transition:all .25s;
+  font-size:13px;color:var(--text);line-height:1.4;
+  font-family:var(--font);
+}
+.mcq-option:hover{border-color:rgba(245,166,35,0.35);background:rgba(245,166,35,0.05)}
+.mcq-option .option-letter{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,0.06);
+  font-size:12px;font-weight:700;flex-shrink:0;
+  transition:all .25s;
+}
+.mcq-option.correct{
+  border-color:#4ade80;background:rgba(74,222,128,0.1);
+}
+.mcq-option.correct .option-letter{background:#4ade80;color:var(--bg)}
+.mcq-option.wrong{
+  border-color:#ef4444;background:rgba(239,68,68,0.1);
+}
+.mcq-option.wrong .option-letter{background:#ef4444;color:#fff}
+.mcq-option.disabled{pointer-events:none;opacity:0.7}
+.mcq-option.disabled.correct{opacity:1}
+.mcq-explanation{
+  margin-top:10px;padding:10px 14px;border-radius:8px;
+  font-size:13px;line-height:1.5;color:var(--accent2);
+  background:rgba(232,197,71,0.06);border:1px solid rgba(232,197,71,0.15);
+  display:none;
+}
+.mcq-explanation.show{display:block}
+.mcq-counter{
+  font-size:12px;color:var(--muted);text-align:center;
+  margin-bottom:14px;padding:6px;border-radius:8px;
+  background:rgba(255,255,255,0.03);
+}
 @media(max-width:768px){
   #studyNotesCard{padding:24px 18px}
   .note-item{flex-wrap:wrap;gap:10px;padding:12px 14px}
@@ -583,7 +652,14 @@ footer{background:#061209;
     <p class="section-desc reveal">Access past papers, MCQs, and comprehensive study notes to ace your exams.</p>
     <div class="resources-grid">
       <div class="resource-card reveal"><div class="resource-icon">📄</div><h3>Past Papers</h3><p>Solved and unsolved past papers for CSS, PMS, FPSC, SPSC, PPSC, and NTS.</p></div>
-      <div class="resource-card reveal"><div class="resource-icon">❓</div><h3>MCQs Bank</h3><p>Thousands of practice MCQs covering all subjects with detailed explanations.</p></div>
+      <div class="resource-card reveal" id="mcqsCard">
+        <div class="resource-icon">❓</div>
+        <h3>MCQs Bank</h3>
+        <p>Practice MCQs with instant feedback and detailed explanations.</p>
+        <div class="mcqs-container" id="mcqsContainer">
+          <!-- MCQs rendered by JavaScript -->
+        </div>
+      </div>
       <div class="resource-card reveal" id="studyNotesCard">
         <div class="resource-icon">📘</div>
         <h3>Study Notes</h3>
@@ -954,6 +1030,187 @@ function renderStudyNotes() {
   container.innerHTML = html;
 }
 renderStudyNotes();
+
+// ─── Vaccinator MCQs Data ───
+const letters = ['A', 'B', 'C', 'D'];
+const vaccinatorMcqs = [
+  {
+    question: 'What does EPI stand for in the context of vaccination?',
+    options: ['Extended Program on Immunization', 'Expanded Program on Immunization', 'Emergency Preventive Initiative', 'Essential Pediatric Immunization'],
+    correct: 1,
+    explanation: 'EPI stands for Expanded Program on Immunization, launched by WHO in 1974 to provide life-saving vaccines to children worldwide.'
+  },
+  {
+    question: 'At what temperature should most vaccines be stored?',
+    options: ['-20°C', '0°C to 4°C', '2°C to 8°C', '10°C to 15°C'],
+    correct: 2,
+    explanation: 'Most vaccines must be stored at 2°C to 8°C (refrigerator temperature) to maintain their potency. Freezing can damage many vaccines.'
+  },
+  {
+    question: 'Which of the following is a live attenuated vaccine?',
+    options: ['Tetanus toxoid', 'Hepatitis B vaccine', 'BCG vaccine', 'Influenza injectable (inactivated)'],
+    correct: 2,
+    explanation: 'BCG (Bacillus Calmette-Guérin) is a live attenuated vaccine used against tuberculosis. Live attenuated vaccines contain weakened forms of the pathogen.'
+  },
+  {
+    question: 'How many doses of Pentavalent vaccine are given in the EPI schedule of Pakistan?',
+    options: ['2 doses', '3 doses', '4 doses', '5 doses'],
+    correct: 1,
+    explanation: 'Pentavalent vaccine is given as 3 doses at 6, 10, and 14 weeks of age. It protects against Diphtheria, Pertussis, Tetanus, Hepatitis B, and Hib.'
+  },
+  {
+    question: 'What is the cold chain in immunization?',
+    options: ['A chain of vaccines', 'A system of transporting patients', 'A temperature-controlled supply chain for vaccines', 'A type of vaccine administration'],
+    correct: 2,
+    explanation: 'The cold chain is a temperature-controlled supply chain that ensures vaccines are stored and transported within the recommended temperature range from manufacture to administration.'
+  },
+  {
+    question: 'Which vaccine is given at birth in the EPI schedule?',
+    options: ['Pentavalent', 'Measles', 'BCG and OPV-0', 'IPV'],
+    correct: 2,
+    explanation: 'BCG (for tuberculosis) and OPV-0 (Oral Polio Vaccine - zero dose) are given at birth in Pakistan\'s EPI schedule.'
+  },
+  {
+    question: 'What is the most common route of vaccine administration?',
+    options: ['Oral', 'Intramuscular', 'Subcutaneous', 'Intradermal'],
+    correct: 1,
+    explanation: 'Intramuscular (IM) injection is the most common route for many vaccines including Pentavalent, PCV, IPV, and Hepatitis B vaccines.'
+  },
+  {
+    question: 'Which disease does the Measles vaccine prevent?',
+    options: ['Measles only', 'Measles and Rubella', 'Measles, Mumps and Rubella', 'Measles and Chickenpox'],
+    correct: 2,
+    explanation: 'The Measles vaccine is often given as MR (Measles-Rubella) combined vaccine at 9 and 15 months in the EPI schedule.'
+  },
+  {
+    question: 'What is a contraindication for vaccination?',
+    options: ['Mild cold', 'A condition that makes vaccination inadvisable', 'Low-grade fever', 'Malnutrition'],
+    correct: 1,
+    explanation: 'A contraindication is a condition or circumstance that makes a particular vaccine inadvisable. Common contraindications include severe allergic reactions to a previous dose.'
+  },
+  {
+    question: 'What is herd immunity?',
+    options: ['Immunity in a single person', 'Immunity passed from mother to child', 'Indirect protection from infectious diseases when a large population is immune', 'Immunity from natural infection'],
+    correct: 2,
+    explanation: 'Herd immunity occurs when a sufficient percentage of a population is immune to a disease, making its spread unlikely and protecting those who cannot be vaccinated.'
+  },
+  {
+    question: 'Which gas is commonly used in vaccine cold chain equipment?',
+    options: ['Oxygen', 'Nitrogen', 'Carbon dioxide', 'Hydrogen'],
+    correct: 1,
+    explanation: 'Nitrogen gas is commonly used in cold chain equipment, particularly in liquid nitrogen refrigerators for storing certain vaccines at very low temperatures.'
+  },
+  {
+    question: 'What is the purpose of a vaccine carrier?',
+    options: ['To store vaccines permanently', 'To transport vaccines while maintaining cold chain', 'To mix vaccines', 'To dispose of vaccine vials'],
+    correct: 1,
+    explanation: 'A vaccine carrier is a portable insulated container used to transport small quantities of vaccines while maintaining the required temperature (2°C to 8°C).'
+  },
+  {
+    question: 'Which type of vaccine contains killed pathogens?',
+    options: ['Live attenuated vaccine', 'Inactivated (killed) vaccine', 'Toxoid vaccine', 'Recombinant vaccine'],
+    correct: 1,
+    explanation: 'Inactivated or killed vaccines contain pathogens that have been killed or inactivated so they cannot cause disease but still trigger an immune response. Examples include IPV and Hepatitis A vaccine.'
+  },
+  {
+    question: 'How long can a opened multidose vial be used after opening?',
+    options: ['Same day only', 'Up to 28 days if stored properly and not contaminated', 'Up to 7 days', 'Up to 14 days'],
+    correct: 1,
+    explanation: 'According to WHO guidelines, opened multidose vials can be used for up to 28 days after opening, provided they have not been contaminated and are stored at proper temperature.'
+  },
+  {
+    question: 'What is the correct injection site for BCG vaccine?',
+    options: ['Deltoid muscle', 'Upper arm (intradermal)', 'Anterolateral thigh', 'Gluteal region'],
+    correct: 1,
+    explanation: 'BCG vaccine is given intradermally at the insertion of the deltoid muscle (upper left arm). It should not be given intramuscularly or subcutaneously.'
+  },
+  {
+    question: 'Which vaccine is given to prevent Polio?',
+    options: ['IPV only', 'OPV only', 'Both OPV and IPV', 'Neither'],
+    correct: 2,
+    explanation: 'Both Oral Polio Vaccine (OPV) and Inactivated Polio Vaccine (IPV) are used in Pakistan\'s polio eradication program. OPV-0 at birth, followed by OPV and IPV in the schedule.'
+  },
+  {
+    question: 'What is VVM on a vaccine vial?',
+    options: ['Vaccine Volume Marker', 'Vaccine Vial Monitor', 'Viral Viability Meter', 'Vaccine Validation Mechanism'],
+    correct: 1,
+    explanation: 'VVM (Vaccine Vial Monitor) is a label containing a heat-sensitive material that changes color when exposed to heat over time, indicating if the vaccine has been damaged by heat.'
+  },
+  {
+    question: 'At what age is the first dose of Measles vaccine given in Pakistan\'s EPI?',
+    options: ['6 months', '9 months', '12 months', '15 months'],
+    correct: 1,
+    explanation: 'The first dose of Measles-Rubella (MR) vaccine is given at 9 months of age in Pakistan\'s EPI schedule, with a second dose at 15 months.'
+  },
+  {
+    question: 'What should a vaccinator do if a vaccine vial\'s VVM indicates heat damage?',
+    options: ['Use it immediately', 'Keep it refrigerated and use later', 'Discard it following proper protocol', 'Shake and check again'],
+    correct: 2,
+    explanation: 'If the VVM indicates heat damage (the inner square has changed color to match or be darker than the outer circle), the vaccine should be discarded following proper disposal protocols.'
+  },
+  {
+    question: 'Which disease is prevented by the Pentavalent vaccine?',
+    options: ['Diphtheria, Pertussis, Tetanus, Hepatitis B, Hib', 'Polio, Measles, Rubella, Mumps, Tetanus', 'Tuberculosis, Diphtheria, Polio, Hepatitis B, Hib', 'Diphtheria, Tetanus, Pertussis, Polio, Measles'],
+    correct: 0,
+    explanation: 'Pentavalent vaccine protects against five diseases: Diphtheria, Pertussis (whooping cough), Tetanus, Hepatitis B, and Haemophilus influenzae type b (Hib).'
+  },
+  {
+    question: 'What is the correct needle size for intramuscular injection in infants?',
+    options: ['18 gauge, 1.5 inch', '23-25 gauge, 1 inch', '26-27 gauge, 5/8 inch', '20 gauge, 1.5 inch'],
+    correct: 1,
+    explanation: 'For IM injections in infants, a 23-25 gauge needle of 1 inch length is typically used. The anterolateral thigh is the preferred site for infants under 12 months.'
+  },
+  {
+    question: 'Which vaccine is contraindicated during pregnancy?',
+    options: ['Tetanus toxoid', 'Hepatitis B vaccine', 'BCG (live attenuated)', 'IPV'],
+    correct: 2,
+    explanation: 'Live attenuated vaccines like BCG are generally contraindicated during pregnancy due to the theoretical risk to the fetus. Inactivated vaccines and toxoids are considered safe.'
+  }
+];
+
+function renderVaccinatorMcqs() {
+  const container = document.getElementById('mcqsContainer');
+  if (!container) return;
+  const total = vaccinatorMcqs.length;
+  let html = `<div class="mcqs-label">Vaccinator Practice MCQs (${total} questions)</div>`;
+  html += `<div class="mcq-counter">Click on an option to check your answer</div>`;
+  vaccinatorMcqs.forEach((q, idx) => {
+    html += `<div class="mcq-item" data-idx="${idx}">`;
+    html += `<div class="mcq-question">${idx + 1}. ${q.question}</div>`;
+    html += `<div class="mcq-options">`;
+    q.options.forEach((opt, oi) => {
+      html += `<button class="mcq-option" data-idx="${idx}" data-opt="${oi}">
+        <span class="option-letter">${letters[oi]}</span>
+        <span>${opt}</span>
+      </button>`;
+    });
+    html += `</div>`;
+    html += `<div class="mcq-explanation" id="expl-${idx}">${q.explanation}</div>`;
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('.mcq-option').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const idx = parseInt(this.dataset.idx);
+      const selected = parseInt(this.dataset.opt);
+      const q = vaccinatorMcqs[idx];
+      const item = this.closest('.mcq-item');
+      const options = item.querySelectorAll('.mcq-option');
+      const expl = document.getElementById(`expl-${idx}`);
+
+      if (this.classList.contains('disabled')) return;
+
+      options.forEach(o => o.classList.add('disabled'));
+      options[q.correct].classList.add('correct');
+      if (selected !== q.correct) {
+        this.classList.add('wrong');
+      }
+      expl.classList.add('show');
+    });
+  });
+}
+renderVaccinatorMcqs();
 </script>
 </body>
 </html>
