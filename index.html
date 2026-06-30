@@ -300,6 +300,12 @@ section{padding:100px 0;position:relative}
   font-size:14px;font-weight:600;color:var(--text);
   line-height:1.6;margin-bottom:12px;
 }
+.mcq-subject{
+  display:inline-block;margin-left:8px;padding:1px 10px;
+  border-radius:100px;background:rgba(245,166,35,0.1);
+  color:var(--accent);font-size:10px;font-weight:500;
+  letter-spacing:0.3px;vertical-align:middle;
+}
 .mcq-options{display:flex;flex-direction:column;gap:8px}
 .mcq-option{
   display:flex;align-items:center;gap:10px;
@@ -340,14 +346,86 @@ section{padding:100px 0;position:relative}
   margin-bottom:14px;padding:6px;border-radius:8px;
   background:rgba(255,255,255,0.03);
 }
+.mcq-option.selected{
+  border-color:var(--accent);background:rgba(245,166,35,0.12);
+}
+.mcq-option.selected .option-letter{background:var(--accent);color:var(--bg)}
+.mcq-submit-wrap{text-align:center;margin-top:18px}
+.mcq-submit-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 36px;border-radius:10px;
+  background:var(--accent);color:var(--bg);
+  font-size:15px;font-weight:700;border:none;
+  cursor:pointer;transition:all .3s;
+  font-family:var(--font);
+}
+.mcq-submit-btn:hover{
+  background:var(--accent2);transform:translateY(-2px);
+  box-shadow:0 6px 24px rgba(245,166,35,0.35);
+}
+.mcq-submit-btn:disabled{opacity:0.4;pointer-events:none}
+.mcq-submit-btn.submitted{background:#4ade80;color:var(--bg)}
+.mcq-results{
+  display:none;margin-bottom:18px;
+  padding:20px 24px;border-radius:12px;
+  background:rgba(74,222,128,0.06);
+  border:1px solid rgba(74,222,128,0.2);
+  text-align:center;
+}
+.mcq-results.show{display:block}
+.mcq-results .score{
+  font-size:42px;font-weight:900;color:#4ade80;
+  line-height:1;
+}
+.mcq-results .score-label{
+  font-size:13px;color:var(--muted);margin-top:4px;
+}
+.mcq-results .score-details{
+  display:flex;justify-content:center;gap:24px;
+  margin-top:14px;flex-wrap:wrap;
+}
+.mcq-results .score-detail{
+  font-size:13px;color:var(--text);
+  padding:6px 16px;border-radius:8px;
+  background:rgba(255,255,255,0.04);
+}
+.mcq-results .score-detail .num{font-weight:700;font-size:18px}
+.mcq-results .score-detail.correct .num{color:#4ade80}
+.mcq-results .score-detail.wrong .num{color:#ef4444}
+.mcq-results .score-detail.unanswered .num{color:var(--muted)}
+.mcq-results .score-bar-wrap{
+  margin-top:14px;height:6px;border-radius:3px;
+  background:rgba(255,255,255,0.08);overflow:hidden;
+}
+.mcq-results .score-bar{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,#4ade80,var(--accent));
+  transition:width .8s ease;width:0;
+}
+.mcq-results .reset-btn{
+  margin-top:14px;padding:8px 24px;border-radius:8px;
+  background:rgba(255,255,255,0.06);color:var(--text);
+  font-size:13px;font-weight:600;border:1px solid var(--border);
+  cursor:pointer;transition:all .3s;font-family:var(--font);
+}
+.mcq-results .reset-btn:hover{
+  background:rgba(255,255,255,0.1);
+  border-color:rgba(245,166,35,0.3);
+}
 @media(max-width:768px){
   #studyNotesCard{padding:24px 18px}
+  #mcqsCard{padding:24px 18px}
   .note-item{flex-wrap:wrap;gap:10px;padding:12px 14px}
   .note-meta{flex-direction:row;width:100%;margin-left:0;justify-content:flex-end}
   .notes-container{max-height:400px}
+  .mcqs-container{max-height:480px}
+  .mcq-item{padding:14px 16px}
+  .mcq-results .score{font-size:32px}
+  .mcq-results .score-details{gap:14px}
 }
 @media(max-width:480px){
   #studyNotesCard{padding:20px 14px}
+  #mcqsCard{padding:20px 14px}
   .note-icon{font-size:26px}
   .note-title{font-size:14px}
   .note-desc{font-size:12px}
@@ -654,8 +732,8 @@ footer{background:#061209;
       <div class="resource-card reveal"><div class="resource-icon">📄</div><h3>Past Papers</h3><p>Solved and unsolved past papers for CSS, PMS, FPSC, SPSC, PPSC, and NTS.</p></div>
       <div class="resource-card reveal" id="mcqsCard">
         <div class="resource-icon">❓</div>
-        <h3>MCQs Bank</h3>
-        <p>Practice MCQs with instant feedback and detailed explanations.</p>
+        <h3>Vaccinator MCQs</h3>
+        <p>Vaccinator MCQs — select your answers and submit to see your score.</p>
         <div class="mcqs-container" id="mcqsContainer">
           <!-- MCQs rendered by JavaScript -->
         </div>
@@ -1035,136 +1113,704 @@ renderStudyNotes();
 const letters = ['A', 'B', 'C', 'D'];
 const vaccinatorMcqs = [
   {
-    question: 'What does EPI stand for in the context of vaccination?',
-    options: ['Extended Program on Immunization', 'Expanded Program on Immunization', 'Emergency Preventive Initiative', 'Essential Pediatric Immunization'],
-    correct: 1,
-    explanation: 'EPI stands for Expanded Program on Immunization, launched by WHO in 1974 to provide life-saving vaccines to children worldwide.'
-  },
-  {
-    question: 'At what temperature should most vaccines be stored?',
-    options: ['-20°C', '0°C to 4°C', '2°C to 8°C', '10°C to 15°C'],
-    correct: 2,
-    explanation: 'Most vaccines must be stored at 2°C to 8°C (refrigerator temperature) to maintain their potency. Freezing can damage many vaccines.'
-  },
-  {
-    question: 'Which of the following is a live attenuated vaccine?',
-    options: ['Tetanus toxoid', 'Hepatitis B vaccine', 'BCG vaccine', 'Influenza injectable (inactivated)'],
-    correct: 2,
-    explanation: 'BCG (Bacillus Calmette-Guérin) is a live attenuated vaccine used against tuberculosis. Live attenuated vaccines contain weakened forms of the pathogen.'
-  },
-  {
-    question: 'How many doses of Pentavalent vaccine are given in the EPI schedule of Pakistan?',
-    options: ['2 doses', '3 doses', '4 doses', '5 doses'],
-    correct: 1,
-    explanation: 'Pentavalent vaccine is given as 3 doses at 6, 10, and 14 weeks of age. It protects against Diphtheria, Pertussis, Tetanus, Hepatitis B, and Hib.'
-  },
-  {
-    question: 'What is the cold chain in immunization?',
-    options: ['A chain of vaccines', 'A system of transporting patients', 'A temperature-controlled supply chain for vaccines', 'A type of vaccine administration'],
-    correct: 2,
-    explanation: 'The cold chain is a temperature-controlled supply chain that ensures vaccines are stored and transported within the recommended temperature range from manufacture to administration.'
-  },
-  {
-    question: 'Which vaccine is given at birth in the EPI schedule?',
-    options: ['Pentavalent', 'Measles', 'BCG and OPV-0', 'IPV'],
-    correct: 2,
-    explanation: 'BCG (for tuberculosis) and OPV-0 (Oral Polio Vaccine - zero dose) are given at birth in Pakistan\'s EPI schedule.'
-  },
-  {
-    question: 'What is the most common route of vaccine administration?',
-    options: ['Oral', 'Intramuscular', 'Subcutaneous', 'Intradermal'],
-    correct: 1,
-    explanation: 'Intramuscular (IM) injection is the most common route for many vaccines including Pentavalent, PCV, IPV, and Hepatitis B vaccines.'
-  },
-  {
-    question: 'Which disease does the Measles vaccine prevent?',
-    options: ['Measles only', 'Measles and Rubella', 'Measles, Mumps and Rubella', 'Measles and Chickenpox'],
-    correct: 2,
-    explanation: 'The Measles vaccine is often given as MR (Measles-Rubella) combined vaccine at 9 and 15 months in the EPI schedule.'
-  },
-  {
-    question: 'What is a contraindication for vaccination?',
-    options: ['Mild cold', 'A condition that makes vaccination inadvisable', 'Low-grade fever', 'Malnutrition'],
-    correct: 1,
-    explanation: 'A contraindication is a condition or circumstance that makes a particular vaccine inadvisable. Common contraindications include severe allergic reactions to a previous dose.'
-  },
-  {
-    question: 'What is herd immunity?',
-    options: ['Immunity in a single person', 'Immunity passed from mother to child', 'Indirect protection from infectious diseases when a large population is immune', 'Immunity from natural infection'],
-    correct: 2,
-    explanation: 'Herd immunity occurs when a sufficient percentage of a population is immune to a disease, making its spread unlikely and protecting those who cannot be vaccinated.'
-  },
-  {
-    question: 'Which gas is commonly used in vaccine cold chain equipment?',
-    options: ['Oxygen', 'Nitrogen', 'Carbon dioxide', 'Hydrogen'],
-    correct: 1,
-    explanation: 'Nitrogen gas is commonly used in cold chain equipment, particularly in liquid nitrogen refrigerators for storing certain vaccines at very low temperatures.'
-  },
-  {
-    question: 'What is the purpose of a vaccine carrier?',
-    options: ['To store vaccines permanently', 'To transport vaccines while maintaining cold chain', 'To mix vaccines', 'To dispose of vaccine vials'],
-    correct: 1,
-    explanation: 'A vaccine carrier is a portable insulated container used to transport small quantities of vaccines while maintaining the required temperature (2°C to 8°C).'
-  },
-  {
-    question: 'Which type of vaccine contains killed pathogens?',
-    options: ['Live attenuated vaccine', 'Inactivated (killed) vaccine', 'Toxoid vaccine', 'Recombinant vaccine'],
-    correct: 1,
-    explanation: 'Inactivated or killed vaccines contain pathogens that have been killed or inactivated so they cannot cause disease but still trigger an immune response. Examples include IPV and Hepatitis A vaccine.'
-  },
-  {
-    question: 'How long can a opened multidose vial be used after opening?',
-    options: ['Same day only', 'Up to 28 days if stored properly and not contaminated', 'Up to 7 days', 'Up to 14 days'],
-    correct: 1,
-    explanation: 'According to WHO guidelines, opened multidose vials can be used for up to 28 days after opening, provided they have not been contaminated and are stored at proper temperature.'
-  },
-  {
-    question: 'What is the correct injection site for BCG vaccine?',
-    options: ['Deltoid muscle', 'Upper arm (intradermal)', 'Anterolateral thigh', 'Gluteal region'],
-    correct: 1,
-    explanation: 'BCG vaccine is given intradermally at the insertion of the deltoid muscle (upper left arm). It should not be given intramuscularly or subcutaneously.'
-  },
-  {
-    question: 'Which vaccine is given to prevent Polio?',
-    options: ['IPV only', 'OPV only', 'Both OPV and IPV', 'Neither'],
-    correct: 2,
-    explanation: 'Both Oral Polio Vaccine (OPV) and Inactivated Polio Vaccine (IPV) are used in Pakistan\'s polio eradication program. OPV-0 at birth, followed by OPV and IPV in the schedule.'
-  },
-  {
-    question: 'What is VVM on a vaccine vial?',
-    options: ['Vaccine Volume Marker', 'Vaccine Vial Monitor', 'Viral Viability Meter', 'Vaccine Validation Mechanism'],
-    correct: 1,
-    explanation: 'VVM (Vaccine Vial Monitor) is a label containing a heat-sensitive material that changes color when exposed to heat over time, indicating if the vaccine has been damaged by heat.'
-  },
-  {
-    question: 'At what age is the first dose of Measles vaccine given in Pakistan\'s EPI?',
-    options: ['6 months', '9 months', '12 months', '15 months'],
-    correct: 1,
-    explanation: 'The first dose of Measles-Rubella (MR) vaccine is given at 9 months of age in Pakistan\'s EPI schedule, with a second dose at 15 months.'
-  },
-  {
-    question: 'What should a vaccinator do if a vaccine vial\'s VVM indicates heat damage?',
-    options: ['Use it immediately', 'Keep it refrigerated and use later', 'Discard it following proper protocol', 'Shake and check again'],
-    correct: 2,
-    explanation: 'If the VVM indicates heat damage (the inner square has changed color to match or be darker than the outer circle), the vaccine should be discarded following proper disposal protocols.'
-  },
-  {
-    question: 'Which disease is prevented by the Pentavalent vaccine?',
-    options: ['Diphtheria, Pertussis, Tetanus, Hepatitis B, Hib', 'Polio, Measles, Rubella, Mumps, Tetanus', 'Tuberculosis, Diphtheria, Polio, Hepatitis B, Hib', 'Diphtheria, Tetanus, Pertussis, Polio, Measles'],
+    subject: "EPI Vaccination",
+    question: "What does EPI stand for in Pakistan's vaccination program?",
+    options: ["Expanded Program on Immunization","Emergency Polio Initiative","Epidemic Prevention Institute","Extended Pediatric Immunization"],
     correct: 0,
-    explanation: 'Pentavalent vaccine protects against five diseases: Diphtheria, Pertussis (whooping cough), Tetanus, Hepatitis B, and Haemophilus influenzae type b (Hib).'
+    explanation: "EPI stands for Expanded Program on Immunization, launched by WHO in 1974 and started in Pakistan in 1978."
   },
   {
-    question: 'What is the correct needle size for intramuscular injection in infants?',
-    options: ['18 gauge, 1.5 inch', '23-25 gauge, 1 inch', '26-27 gauge, 5/8 inch', '20 gauge, 1.5 inch'],
-    correct: 1,
-    explanation: 'For IM injections in infants, a 23-25 gauge needle of 1 inch length is typically used. The anterolateral thigh is the preferred site for infants under 12 months.'
+    subject: "EPI Vaccination",
+    question: "At what age is the BCG vaccine given to infants in Pakistan?",
+    options: ["At birth","6 weeks","10 weeks","9 months"],
+    correct: 0,
+    explanation: "BCG vaccine is given at birth or as soon as possible after birth to protect against tuberculosis."
   },
   {
-    question: 'Which vaccine is contraindicated during pregnancy?',
-    options: ['Tetanus toxoid', 'Hepatitis B vaccine', 'BCG (live attenuated)', 'IPV'],
+    subject: "EPI Vaccination",
+    question: "Which vaccine protects against measles?",
+    options: ["DPT","BCG","Measles vaccine","OPV"],
     correct: 2,
-    explanation: 'Live attenuated vaccines like BCG are generally contraindicated during pregnancy due to the theoretical risk to the fetus. Inactivated vaccines and toxoids are considered safe.'
+    explanation: "Measles vaccine provides immunity against the measles virus and is given at 9 months of age."
+  },
+  {
+    subject: "EPI Vaccination",
+    question: "How many doses of Oral Polio Vaccine (OPV) are recommended in the routine EPI schedule?",
+    options: ["2 doses","3 doses","4 doses","5 doses"],
+    correct: 2,
+    explanation: "Four doses of OPV are given: at birth, 6 weeks, 10 weeks, and 14 weeks."
+  },
+  {
+    subject: "EPI Vaccination",
+    question: "What is the recommended storage temperature for most EPI vaccines?",
+    options: ["-20°C to -10°C","+2°C to +8°C","+10°C to +15°C","Room temperature"],
+    correct: 1,
+    explanation: "Most EPI vaccines are stored at +2°C to +8°C in the cold chain to maintain potency."
+  },
+  {
+    subject: "EPI Vaccination",
+    question: "Which disease does the Pentavalent vaccine protect against?",
+    options: ["Diphtheria, Pertussis, Tetanus, Hepatitis B, Hib","Polio, Measles, Rubella, Mumps, Tetanus","TB, Diphtheria, Polio, Measles, Hepatitis B","Tetanus, Pertussis, Polio, Hib, Hepatitis A"],
+    correct: 0,
+    explanation: "Pentavalent vaccine protects against Diphtheria, Pertussis, Tetanus, Hepatitis B, and Haemophilus influenzae type b (Hib)."
+  },
+  {
+    subject: "EPI Vaccination",
+    question: "What is the cold chain in vaccination?",
+    options: ["A series of refrigerators used to store ice","The system of transporting and storing vaccines at recommended temperatures","A manufacturing process for vaccines","A chain of vaccination centers"],
+    correct: 1,
+    explanation: "The cold chain is a temperature-controlled supply chain that ensures vaccines are kept at proper temperatures from manufacture to administration."
+  },
+  {
+    subject: "EPI Vaccination",
+    question: "At what age is the first dose of measles vaccine given in Pakistan's EPI schedule?",
+    options: ["6 months","9 months","12 months","15 months"],
+    correct: 1,
+    explanation: "The first dose of measles vaccine is given at 9 months of age as per Pakistan's EPI schedule."
+  },
+  {
+    subject: "EPI Vaccination",
+    question: "Which vitamin is commonly administered along with EPI vaccines to boost immunity?",
+    options: ["Vitamin A","Vitamin C","Vitamin D","Vitamin B12"],
+    correct: 0,
+    explanation: "Vitamin A supplementation is given alongside EPI vaccines starting at 6 months to boost immunity and prevent blindness."
+  },
+  {
+    subject: "EPI Vaccination",
+    question: "What is a vaccine vial monitor (VVM)?",
+    options: ["A device that counts vaccine doses","A label that changes color with heat exposure","A machine that fills vaccine vials","A needle used for vaccination"],
+    correct: 1,
+    explanation: "A VVM is a label on vaccine vials that changes color when exposed to excessive heat, indicating if the vaccine may have been damaged."
+  },
+  {
+    subject: "Computer",
+    question: "What does CPU stand for?",
+    options: ["Central Process Unit","Central Processing Unit","Computer Personal Unit","Central Program Unit"],
+    correct: 1,
+    explanation: "CPU stands for Central Processing Unit, the primary component of a computer that processes instructions."
+  },
+  {
+    subject: "Computer",
+    question: "Which device is used to display output from a computer?",
+    options: ["Keyboard","Mouse","Monitor","Scanner"],
+    correct: 2,
+    explanation: "A monitor is an output device that displays visual information from the computer."
+  },
+  {
+    subject: "Computer",
+    question: "What is the function of RAM in a computer?",
+    options: ["Permanent data storage","Temporary storage for running programs","Connecting to the internet","Power supply management"],
+    correct: 1,
+    explanation: "RAM (Random Access Memory) provides temporary storage that the computer uses to actively run programs and processes."
+  },
+  {
+    subject: "Computer",
+    question: "Which software is used for creating spreadsheets?",
+    options: ["MS Word","MS Excel","MS PowerPoint","MS Outlook"],
+    correct: 1,
+    explanation: "MS Excel is spreadsheet software used for data organization, calculations, and charting."
+  },
+  {
+    subject: "Computer",
+    question: "What does www stand for in a website address?",
+    options: ["World Wide Web","Wide World Web","Web World Wide","World Web Wide"],
+    correct: 0,
+    explanation: "WWW stands for World Wide Web, a system of interlinked hypertext documents accessed via the internet."
+  },
+  {
+    subject: "Computer",
+    question: "Which key is used to delete the character to the left of the cursor?",
+    options: ["Delete","Backspace","Escape","Shift"],
+    correct: 1,
+    explanation: "The Backspace key deletes the character to the left of the cursor, while Delete removes the character to the right."
+  },
+  {
+    subject: "Computer",
+    question: "What is an operating system?",
+    options: ["A type of application software","Software that manages computer hardware and software resources","A programming language","A web browser"],
+    correct: 1,
+    explanation: "An operating system (e.g., Windows, Linux) manages hardware, software resources, and provides common services for programs."
+  },
+  {
+    subject: "Computer",
+    question: "Which of the following is an input device?",
+    options: ["Monitor","Printer","Keyboard","Speaker"],
+    correct: 2,
+    explanation: "A keyboard is an input device that allows users to enter data and commands into a computer."
+  },
+  {
+    subject: "Computer",
+    question: "What is the full form of USB?",
+    options: ["Universal Serial Bus","Universal System Board","United Serial Bus","Universal Synchronous Bus"],
+    correct: 0,
+    explanation: "USB stands for Universal Serial Bus, a standard for connecting peripherals to computers."
+  },
+  {
+    subject: "Computer",
+    question: "Which of the following is a web browser?",
+    options: ["MS Excel","Google Chrome","Windows","MS Word"],
+    correct: 1,
+    explanation: "Google Chrome is a web browser used to access and view websites on the internet."
+  },
+  {
+    subject: "English",
+    question: "Choose the correct synonym of \"Abundant\":",
+    options: ["Scarce","Plentiful","Limited","Rare"],
+    correct: 1,
+    explanation: "Abundant means existing in large quantities, so \"plentiful\" is the correct synonym."
+  },
+  {
+    subject: "English",
+    question: "Choose the correct antonym of \"Generous\":",
+    options: ["Kind","Stingy","Charitable","Liberal"],
+    correct: 1,
+    explanation: "Generous means willing to give and share; the antonym is \"stingy,\" meaning unwilling to give."
+  },
+  {
+    subject: "English",
+    question: "Identify the correctly spelled word:",
+    options: ["Accomodate","Acommodate","Accommodate","Acomodate"],
+    correct: 2,
+    explanation: "The correct spelling is \"Accommodate\" with double c and double m."
+  },
+  {
+    subject: "English",
+    question: "She _____ to school every day.",
+    options: ["go","goes","going","gone"],
+    correct: 1,
+    explanation: "With a third-person singular subject (she), the present simple verb takes \"s\" — \"goes.\""
+  },
+  {
+    subject: "English",
+    question: "What is the past tense of \"begin\"?",
+    options: ["began","begun","beginned","beginning"],
+    correct: 0,
+    explanation: "The past tense of \"begin\" is \"began\" (e.g., \"It began to rain\")."
+  },
+  {
+    subject: "English",
+    question: "Choose the correct synonym of \"Brave\":",
+    options: ["Cowardly","Timid","Courageous","Fearful"],
+    correct: 2,
+    explanation: "Brave means ready to face danger; \"courageous\" is its synonym."
+  },
+  {
+    subject: "English",
+    question: "Which sentence is grammatically correct?",
+    options: ["He don't like tea.","He doesn't likes tea.","He doesn't like tea.","He not like tea."],
+    correct: 2,
+    explanation: "With a third-person singular subject, \"doesn't\" is used followed by the base form of the verb."
+  },
+  {
+    subject: "English",
+    question: "What is the antonym of \"Victory\"?",
+    options: ["Triumph","Success","Defeat","Win"],
+    correct: 2,
+    explanation: "Victory means winning; its antonym is \"defeat,\" meaning losing."
+  },
+  {
+    subject: "English",
+    question: "The book _____ on the table.",
+    options: ["are","is","am","be"],
+    correct: 1,
+    explanation: "\"Book\" is singular, so the correct verb is \"is\" — \"The book is on the table.\""
+  },
+  {
+    subject: "English",
+    question: "Choose the correct synonym of \"Quick\":",
+    options: ["Slow","Rapid","Lazy","Dull"],
+    correct: 1,
+    explanation: "Quick means fast; \"rapid\" is its synonym."
+  },
+  {
+    subject: "Everyday Science",
+    question: "What is the chemical symbol for water?",
+    options: ["H2O","CO2","NaCl","O2"],
+    correct: 0,
+    explanation: "Water is composed of two hydrogen atoms and one oxygen atom, represented as H2O."
+  },
+  {
+    subject: "Everyday Science",
+    question: "Which organ pumps blood throughout the human body?",
+    options: ["Lungs","Brain","Heart","Liver"],
+    correct: 2,
+    explanation: "The heart is a muscular organ that pumps blood through the circulatory system."
+  },
+  {
+    subject: "Everyday Science",
+    question: "What is the boiling point of water at sea level?",
+    options: ["90°C","100°C","110°C","120°C"],
+    correct: 1,
+    explanation: "Water boils at 100°C (212°F) at standard atmospheric pressure at sea level."
+  },
+  {
+    subject: "Everyday Science",
+    question: "Which gas do plants absorb from the atmosphere?",
+    options: ["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],
+    correct: 2,
+    explanation: "Plants absorb carbon dioxide during photosynthesis to produce glucose and oxygen."
+  },
+  {
+    subject: "Everyday Science",
+    question: "What is the largest organ in the human body?",
+    options: ["Liver","Brain","Heart","Skin"],
+    correct: 3,
+    explanation: "The skin is the largest organ of the human body, covering about 1.5-2 square meters in adults."
+  },
+  {
+    subject: "Everyday Science",
+    question: "What is the speed of light in vacuum approximately?",
+    options: ["3 × 10^6 m/s","3 × 10^8 m/s","3 × 10^10 m/s","3 × 10^4 m/s"],
+    correct: 1,
+    explanation: "The speed of light in vacuum is approximately 3 × 10^8 meters per second (299,792,458 m/s)."
+  },
+  {
+    subject: "Everyday Science",
+    question: "Which vitamin is produced when skin is exposed to sunlight?",
+    options: ["Vitamin A","Vitamin B","Vitamin C","Vitamin D"],
+    correct: 3,
+    explanation: "Vitamin D is synthesized in the skin upon exposure to ultraviolet B radiation from sunlight."
+  },
+  {
+    subject: "Everyday Science",
+    question: "What is the chemical formula of common table salt?",
+    options: ["KCl","NaCl","CaCO3","NaHCO3"],
+    correct: 1,
+    explanation: "Common table salt is sodium chloride (NaCl)."
+  },
+  {
+    subject: "Everyday Science",
+    question: "How many bones are in the adult human body?",
+    options: ["106","206","306","406"],
+    correct: 1,
+    explanation: "The adult human body has 206 bones, though infants are born with about 270 that fuse over time."
+  },
+  {
+    subject: "Everyday Science",
+    question: "Which planet is known as the Red Planet?",
+    options: ["Venus","Jupiter","Mars","Saturn"],
+    correct: 2,
+    explanation: "Mars is called the Red Planet due to its reddish appearance caused by iron oxide (rust) on its surface."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "What comes next in the series: 2, 4, 6, 8, ?",
+    options: ["9","10","11","12"],
+    correct: 1,
+    explanation: "The series increases by 2 each time, so the next number is 10."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "Which number completes the series: 1, 4, 9, 16, ?",
+    options: ["20","24","25","36"],
+    correct: 2,
+    explanation: "The series consists of squares: 1², 2², 3², 4², so the next is 5² = 25."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "Which word does NOT belong with the others?",
+    options: ["Cat","Dog","Car","Cow"],
+    correct: 2,
+    explanation: "Cat, Dog, and Cow are animals, while Car is a vehicle."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "What comes next: A, C, E, G, ?",
+    options: ["H","I","J","F"],
+    correct: 1,
+    explanation: "The series consists of alternate letters of the alphabet: A, C, E, G, so next is I."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "If all cats are mammals and some pets are cats, which must be true?",
+    options: ["All mammals are cats","Some pets are mammals","All pets are mammals","No cats are pets"],
+    correct: 1,
+    explanation: "Since some pets are cats and all cats are mammals, some pets are mammals."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "What is the next number: 3, 6, 11, 18, ?",
+    options: ["25","27","29","31"],
+    correct: 1,
+    explanation: "The differences increase by 2: +3, +5, +7, so the next is +9: 18+9=27."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "Which shape has 4 equal sides?",
+    options: ["Triangle","Rectangle","Square","Circle"],
+    correct: 2,
+    explanation: "A square has four equal sides."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "Find the odd one out: 2, 4, 7, 8, 10",
+    options: ["2","4","7","8"],
+    correct: 2,
+    explanation: "2, 4, 8, and 10 are even numbers, while 7 is odd."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "Dog is to Puppy as Cat is to _____?",
+    options: ["Kitten","Cub","Calf","Foal"],
+    correct: 0,
+    explanation: "A baby dog is a puppy, and a baby cat is a kitten."
+  },
+  {
+    subject: "IQ / Analytical Reasoning",
+    question: "Complete the series: 1, 1, 2, 3, 5, 8, ?",
+    options: ["10","11","12","13"],
+    correct: 3,
+    explanation: "Fibonacci series where each number is the sum of the previous two: 5+8=13."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "Who was the founder of Pakistan?",
+    options: ["Allama Iqbal","Quaid-e-Azam Muhammad Ali Jinnah","Liaquat Ali Khan","Sir Syed Ahmed Khan"],
+    correct: 1,
+    explanation: "Quaid-e-Azam Muhammad Ali Jinnah led the Pakistan Movement and founded Pakistan in 1947."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "Pakistan came into being on which date?",
+    options: ["14 August 1946","14 August 1947","15 August 1947","23 March 1940"],
+    correct: 1,
+    explanation: "Pakistan gained independence on 14 August 1947."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "What is the national language of Pakistan?",
+    options: ["Urdu","English","Punjabi","Sindhi"],
+    correct: 0,
+    explanation: "Urdu is the national language of Pakistan as per the Constitution."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "Which river is the longest in Pakistan?",
+    options: ["Ravi","Chenab","Indus","Jhelum"],
+    correct: 2,
+    explanation: "The Indus River is the longest in Pakistan, flowing about 3,180 km from Tibet to the Arabian Sea."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "What is the capital city of Pakistan?",
+    options: ["Karachi","Lahore","Islamabad","Rawalpindi"],
+    correct: 2,
+    explanation: "Islamabad became the capital of Pakistan in 1963, replacing Karachi."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "Who presented the Lahore Resolution in 1940?",
+    options: ["Quaid-e-Azam","Allama Iqbal","A. K. Fazlul Huq","Sir Sikandar Hayat Khan"],
+    correct: 2,
+    explanation: "A. K. Fazlul Huq, the Prime Minister of Bengal, presented the Lahore Resolution on 23 March 1940."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "What is the highest peak in Pakistan?",
+    options: ["Nanga Parbat","K2","Gasherbrum I","Broad Peak"],
+    correct: 1,
+    explanation: "K2 (8,611 m) is the highest peak in Pakistan and the second highest in the world."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "How many provinces does Pakistan have?",
+    options: ["3","4","5","6"],
+    correct: 1,
+    explanation: "Pakistan has four provinces: Punjab, Sindh, Khyber Pakhtunkhwa, and Balochistan."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "Which is the national flower of Pakistan?",
+    options: ["Rose","Tulip","Jasmine","Sunflower"],
+    correct: 2,
+    explanation: "Jasmine (chambeli) is the national flower of Pakistan."
+  },
+  {
+    subject: "Pakistan Studies",
+    question: "Who was the first Governor-General of Pakistan?",
+    options: ["Liaquat Ali Khan","Quaid-e-Azam Muhammad Ali Jinnah","Khwaja Nazimuddin","Sir Ghulam Muhammad"],
+    correct: 1,
+    explanation: "Quaid-e-Azam Muhammad Ali Jinnah served as the first Governor-General of Pakistan from 1947 until his death in 1948."
+  },
+  {
+    subject: "Islamiat",
+    question: "How many pillars of Islam are there?",
+    options: ["3","4","5","6"],
+    correct: 2,
+    explanation: "There are five pillars of Islam: Shahada, Salah, Zakat, Sawm, and Hajj."
+  },
+  {
+    subject: "Islamiat",
+    question: "Which is the holy book of Islam?",
+    options: ["Torah","Bible","Quran","Zabur"],
+    correct: 2,
+    explanation: "The Quran is the central holy book of Islam, revealed to Prophet Muhammad (PBUH)."
+  },
+  {
+    subject: "Islamiat",
+    question: "What is the first Kalima of Islam?",
+    options: ["Kalima Tayyaba","Kalima Shahadat","Kalima Tamjeed","Kalima Tawheed"],
+    correct: 0,
+    explanation: "Kalima Tayyaba (La ilaha illallah Muhammadur Rasulullah) is the first Kalima and the declaration of faith."
+  },
+  {
+    subject: "Islamiat",
+    question: "How many times do Muslims pray daily?",
+    options: ["Three","Four","Five","Six"],
+    correct: 2,
+    explanation: "Muslims are required to pray five times daily: Fajr, Dhuhr, Asr, Maghrib, and Isha."
+  },
+  {
+    subject: "Islamiat",
+    question: "Which prophet is known as the \"Father of the Prophets\"?",
+    options: ["Prophet Moses (AS)","Prophet Abraham (AS)","Prophet Noah (AS)","Prophet Muhammad (PBUH)"],
+    correct: 1,
+    explanation: "Prophet Ibrahim (Abraham, AS) is known as the Father of the Prophets as many prophets came from his lineage."
+  },
+  {
+    subject: "Islamiat",
+    question: "What is the ninth month of the Islamic calendar?",
+    options: ["Muharram","Ramadan","Shawwal","Dhul Hijjah"],
+    correct: 1,
+    explanation: "Ramadan is the ninth month of the Islamic lunar calendar, during which Muslims fast from dawn to sunset."
+  },
+  {
+    subject: "Islamiat",
+    question: "How many Surahs are in the Quran?",
+    options: ["110","114","120","100"],
+    correct: 1,
+    explanation: "The Quran contains 114 Surahs (chapters) of varying lengths."
+  },
+  {
+    subject: "Islamiat",
+    question: "What is the literal meaning of \"Islam\"?",
+    options: ["Peace and submission","Faith","Struggle","Charity"],
+    correct: 0,
+    explanation: "Islam literally means \"peace through submission to the will of Allah.\""
+  },
+  {
+    subject: "Islamiat",
+    question: "Which angel is responsible for delivering revelation?",
+    options: ["Angel Jibra'eel (Gabriel)","Angel Mikaeel (Michael)","Angel Israfeel","Angel Azrael"],
+    correct: 0,
+    explanation: "Angel Jibra'eel (Gabriel, AS) is the angel responsible for conveying divine revelations to the prophets."
+  },
+  {
+    subject: "Islamiat",
+    question: "What is Zakat?",
+    options: ["Fasting","Pilgrimage","Obligatory charity (alms)","Daily prayers"],
+    correct: 2,
+    explanation: "Zakat is the obligatory charity in Islam, calculated as 2.5% of one's accumulated wealth annually."
+  },
+  {
+    subject: "World Knowledge",
+    question: "Which country is the largest by area?",
+    options: ["Canada","China","Russia","United States"],
+    correct: 2,
+    explanation: "Russia is the largest country in the world by area, covering about 17.1 million square kilometers."
+  },
+  {
+    subject: "World Knowledge",
+    question: "What is the longest river in the world?",
+    options: ["Amazon","Nile","Mississippi","Yangtze"],
+    correct: 1,
+    explanation: "The Nile River in Africa is approximately 6,650 km long, making it the world's longest river."
+  },
+  {
+    subject: "World Knowledge",
+    question: "Which organization is known as the UN?",
+    options: ["United Nations","Universal Network","Union of Nations","United Natives"],
+    correct: 0,
+    explanation: "The United Nations (UN) was founded in 1945 to promote international peace and cooperation."
+  },
+  {
+    subject: "World Knowledge",
+    question: "Which country has the largest population?",
+    options: ["China","India","United States","Indonesia"],
+    correct: 1,
+    explanation: "India has the world's largest population with over 1.4 billion people."
+  },
+  {
+    subject: "World Knowledge",
+    question: "What is the capital of France?",
+    options: ["London","Berlin","Paris","Madrid"],
+    correct: 2,
+    explanation: "Paris is the capital and largest city of France, located on the River Seine."
+  },
+  {
+    subject: "World Knowledge",
+    question: "Which ocean is the largest?",
+    options: ["Atlantic Ocean","Indian Ocean","Pacific Ocean","Arctic Ocean"],
+    correct: 2,
+    explanation: "The Pacific Ocean is the largest and deepest ocean, covering about 63 million square miles."
+  },
+  {
+    subject: "World Knowledge",
+    question: "What does NATO stand for?",
+    options: ["North American Treaty Organization","North Atlantic Treaty Organization","National Alliance Treaty Organization","Northern Atlantic Trade Organization"],
+    correct: 1,
+    explanation: "NATO (North Atlantic Treaty Organization) is a military alliance founded in 1949 for collective defense."
+  },
+  {
+    subject: "World Knowledge",
+    question: "Which desert is the largest hot desert?",
+    options: ["Gobi Desert","Kalahari Desert","Sahara Desert","Arabian Desert"],
+    correct: 2,
+    explanation: "The Sahara Desert in Africa is the largest hot desert, covering about 9.2 million square kilometers."
+  },
+  {
+    subject: "World Knowledge",
+    question: "Which country is known as the Land of the Rising Sun?",
+    options: ["China","South Korea","Japan","Thailand"],
+    correct: 2,
+    explanation: "Japan is called the Land of the Rising Sun."
+  },
+  {
+    subject: "World Knowledge",
+    question: "Which is the smallest continent?",
+    options: ["Europe","Australia","Antarctica","South America"],
+    correct: 1,
+    explanation: "Australia (including Oceania) is the smallest continent by land area."
+  },
+  {
+    subject: "Current Affairs (National & International)",
+    question: "Who is the current Prime Minister of Pakistan (as of mid-2026)?",
+    options: ["Nawaz Sharif","Imran Khan","Shehbaz Sharif","Bilawal Bhutto Zardari"],
+    correct: 2,
+    explanation: "Shehbaz Sharif is serving as the Prime Minister of Pakistan after the 2024 general elections."
+  },
+  {
+    subject: "Current Affairs (National & International)",
+    question: "Which country hosted COP29 in 2024?",
+    options: ["UAE","Azerbaijan","Egypt","Brazil"],
+    correct: 1,
+    explanation: "COP29 was held in Baku, Azerbaijan in November 2024, focusing on climate finance."
+  },
+  {
+    subject: "Current Affairs (National & International)",
+    question: "What is Pakistan's anti-polio campaign called?",
+    options: ["Polio Free Pakistan","Stop Polio Pakistan","Pakistan Polio Eradication Program","National Emergency Action Plan for Polio Eradication"],
+    correct: 3,
+    explanation: "Pakistan follows the National Emergency Action Plan for Polio Eradication (NEAP)."
+  },
+  {
+    subject: "Current Affairs (National & International)",
+    question: "Which SAARC country has its capital at Sri Jayawardenepura Kotte?",
+    options: ["Nepal","Sri Lanka","Bangladesh","Maldives"],
+    correct: 1,
+    explanation: "Sri Lanka's administrative capital is Sri Jayawardenepura Kotte, while Colombo is the commercial capital."
+  },
+  {
+    subject: "Current Affairs (National & International)",
+    question: "Who became US President in January 2025?",
+    options: ["Joe Biden","Donald Trump","Kamala Harris","Ron DeSantis"],
+    correct: 1,
+    explanation: "Donald Trump was inaugurated as the 47th US President on January 20, 2025."
+  },
+  {
+    subject: "Mathematics",
+    question: "What is 15% of 200?",
+    options: ["25","30","35","40"],
+    correct: 1,
+    explanation: "15% of 200 = (15/100) × 200 = 30."
+  },
+  {
+    subject: "Mathematics",
+    question: "A bag has 5 red and 3 blue balls. Probability of red?",
+    options: ["3/8","5/8","5/3","3/5"],
+    correct: 1,
+    explanation: "Total = 5+3 = 8. Probability of red = 5/8."
+  },
+  {
+    subject: "Mathematics",
+    question: "What is the square root of 144?",
+    options: ["10","11","12","13"],
+    correct: 2,
+    explanation: "12 × 12 = 144, so the square root of 144 is 12."
+  },
+  {
+    subject: "Mathematics",
+    question: "Simplify: 3/4 + 1/2",
+    options: ["1","1 1/4","1 1/2","5/4"],
+    correct: 1,
+    explanation: "3/4 + 1/2 = 3/4 + 2/4 = 5/4 = 1 1/4."
+  },
+  {
+    subject: "Mathematics",
+    question: "Ratio of boys to girls is 3:2. If 30 boys, how many girls?",
+    options: ["15","20","25","10"],
+    correct: 1,
+    explanation: "3 parts = 30, so 1 part = 10. Girls = 2 × 10 = 20."
+  },
+  {
+    subject: "Mathematics",
+    question: "Average of 10, 20, 30, 40, 50?",
+    options: ["25","30","35","40"],
+    correct: 1,
+    explanation: "Sum = 150. Average = 150/5 = 30."
+  },
+  {
+    subject: "Mathematics",
+    question: "Train travels 300 km in 5 hours. Speed?",
+    options: ["50 km/h","60 km/h","70 km/h","80 km/h"],
+    correct: 1,
+    explanation: "Speed = Distance/Time = 300/5 = 60 km/h."
+  },
+  {
+    subject: "Mathematics",
+    question: "What is 2^5?",
+    options: ["10","16","25","32"],
+    correct: 3,
+    explanation: "2^5 = 2 × 2 × 2 × 2 × 2 = 32."
+  },
+  {
+    subject: "Mathematics",
+    question: "Shirt costs Rs. 800 with 10% discount. Price?",
+    options: ["Rs. 700","Rs. 720","Rs. 750","Rs. 780"],
+    correct: 1,
+    explanation: "Discount = 10% of 800 = Rs. 80. Price = 800-80 = Rs. 720."
+  },
+  {
+    subject: "Mathematics",
+    question: "Solve: 2x + 4 = 12",
+    options: ["3","4","5","6"],
+    correct: 1,
+    explanation: "2x + 4 = 12, so 2x = 8, x = 4."
+  },
+  {
+    subject: "Mathematics",
+    question: "Product of 12 and 15?",
+    options: ["160","170","180","190"],
+    correct: 2,
+    explanation: "12 × 15 = 180."
+  },
+  {
+    subject: "Mathematics",
+    question: "LCM of 4 and 6?",
+    options: ["10","12","18","24"],
+    correct: 1,
+    explanation: "LCM of 4 and 6 is 12, the smallest number divisible by both."
+  },
+  {
+    subject: "Mathematics",
+    question: "Man earns Rs. 25,000, spends 70%. Savings?",
+    options: ["Rs. 5,000","Rs. 7,500","Rs. 10,000","Rs. 17,500"],
+    correct: 1,
+    explanation: "Savings = 30% of 25,000 = Rs. 7,500."
+  },
+  {
+    subject: "Mathematics",
+    question: "0.25 as fraction in simplest form?",
+    options: ["1/2","1/4","2/5","3/4"],
+    correct: 1,
+    explanation: "0.25 = 25/100 = 1/4."
+  },
+  {
+    subject: "Mathematics",
+    question: "3 pens cost Rs. 45. Cost of 7 pens?",
+    options: ["Rs. 90","Rs. 100","Rs. 105","Rs. 110"],
+    correct: 2,
+    explanation: "Cost of 1 pen = 45/3 = Rs. 15. Cost of 7 pens = 7 × 15 = Rs. 105."
   }
 ];
 
@@ -1172,43 +1818,120 @@ function renderVaccinatorMcqs() {
   const container = document.getElementById('mcqsContainer');
   if (!container) return;
   const total = vaccinatorMcqs.length;
-  let html = `<div class="mcqs-label">Vaccinator Practice MCQs (${total} questions)</div>`;
-  html += `<div class="mcq-counter">Click on an option to check your answer</div>`;
-  vaccinatorMcqs.forEach((q, idx) => {
-    html += `<div class="mcq-item" data-idx="${idx}">`;
-    html += `<div class="mcq-question">${idx + 1}. ${q.question}</div>`;
-    html += `<div class="mcq-options">`;
-    q.options.forEach((opt, oi) => {
-      html += `<button class="mcq-option" data-idx="${idx}" data-opt="${oi}">
-        <span class="option-letter">${letters[oi]}</span>
-        <span>${opt}</span>
-      </button>`;
+  const userAnswers = new Array(total).fill(null);
+
+  function buildMcqs() {
+    let html = `<div class="mcqs-label">Vaccinator MCQs (${total} questions)</div>`;
+    html += `<div class="mcq-counter">Select an answer for each question, then click Submit to see your results.</div>`;
+    vaccinatorMcqs.forEach((q, idx) => {
+      html += `<div class="mcq-item" data-idx="${idx}">`;
+      html += `<div class="mcq-question">${idx + 1}. ${q.question} <span class="mcq-subject">${q.subject}</span></div>`;
+      html += `<div class="mcq-options">`;
+      q.options.forEach((opt, oi) => {
+        const sel = userAnswers[idx] === oi ? ' selected' : '';
+        html += `<button class="mcq-option${sel}" data-idx="${idx}" data-opt="${oi}">
+          <span class="option-letter">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`;
+      });
+      html += `</div>`;
+      html += `<div class="mcq-explanation" id="expl-${idx}">${q.explanation}</div>`;
+      html += `</div>`;
     });
-    html += `</div>`;
-    html += `<div class="mcq-explanation" id="expl-${idx}">${q.explanation}</div>`;
-    html += `</div>`;
-  });
-  container.innerHTML = html;
+    html += `<div class="mcq-submit-wrap"><button class="mcq-submit-btn" id="mcqSubmitBtn">✓ Submit All</button></div>`;
+    container.innerHTML = html;
+  }
 
-  container.querySelectorAll('.mcq-option').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const idx = parseInt(this.dataset.idx);
-      const selected = parseInt(this.dataset.opt);
-      const q = vaccinatorMcqs[idx];
-      const item = this.closest('.mcq-item');
-      const options = item.querySelectorAll('.mcq-option');
-      const expl = document.getElementById(`expl-${idx}`);
-
-      if (this.classList.contains('disabled')) return;
-
-      options.forEach(o => o.classList.add('disabled'));
-      options[q.correct].classList.add('correct');
-      if (selected !== q.correct) {
-        this.classList.add('wrong');
-      }
-      expl.classList.add('show');
+  function attachEvents() {
+    container.querySelectorAll('.mcq-option').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (this.closest('.mcq-item').classList.contains('submitted')) return;
+        const idx = parseInt(this.dataset.idx);
+        const opt = parseInt(this.dataset.opt);
+        userAnswers[idx] = opt;
+        const siblings = this.closest('.mcq-options').querySelectorAll('.mcq-option');
+        siblings.forEach(s => s.classList.remove('selected'));
+        this.classList.add('selected');
+      });
     });
-  });
+
+    document.getElementById('mcqSubmitBtn').addEventListener('click', function() {
+      if (this.classList.contains('submitted')) return;
+
+      let correctCount = 0;
+      let wrongCount = 0;
+      let unansweredCount = 0;
+
+      vaccinatorMcqs.forEach((q, idx) => {
+        const item = container.querySelector(`.mcq-item[data-idx="${idx}"]`);
+        const options = item.querySelectorAll('.mcq-option');
+        const expl = document.getElementById(`expl-${idx}`);
+        const selected = userAnswers[idx];
+
+        options.forEach(o => o.classList.add('disabled'));
+        options[q.correct].classList.add('correct');
+
+        if (selected === null) {
+          unansweredCount++;
+        } else if (selected === q.correct) {
+          correctCount++;
+        } else {
+          wrongCount++;
+          options[selected].classList.add('wrong');
+        }
+        expl.classList.add('show');
+        item.classList.add('submitted');
+      });
+
+      this.classList.add('submitted');
+      this.textContent = '✓ Submitted';
+      this.disabled = true;
+
+      showResults(correctCount, wrongCount, unansweredCount);
+    });
+  }
+
+  function showResults(correct, wrong, unanswered) {
+    const existing = document.getElementById('mcqResults');
+    if (existing) existing.remove();
+
+    const pct = Math.round((correct / total) * 100);
+    const resultsDiv = document.createElement('div');
+    resultsDiv.id = 'mcqResults';
+    resultsDiv.className = 'mcq-results show';
+    resultsDiv.innerHTML = `
+      <div class="score">${correct}/${total}</div>
+      <div class="score-label">${pct}% Correct</div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:${pct}%"></div></div>
+      <div class="score-details">
+        <div class="score-detail correct"><span class="num">${correct}</span> Correct</div>
+        <div class="score-detail wrong"><span class="num">${wrong}</span> Wrong</div>
+        <div class="score-detail unanswered"><span class="num">${unanswered}</span> Unanswered</div>
+      </div>
+      <button class="reset-btn" id="mcqResetBtn">🔄 Try Again</button>
+    `;
+    container.insertBefore(resultsDiv, container.firstChild);
+
+    document.getElementById('mcqResetBtn').addEventListener('click', resetMcqs);
+  }
+
+  function resetMcqs() {
+    userAnswers.fill(null);
+    const results = document.getElementById('mcqResults');
+    if (results) results.remove();
+    container.querySelectorAll('.mcq-option').forEach(o => {
+      o.classList.remove('selected', 'correct', 'wrong', 'disabled');
+    });
+    container.querySelectorAll('.mcq-explanation').forEach(e => e.classList.remove('show'));
+    container.querySelectorAll('.mcq-item').forEach(i => i.classList.remove('submitted'));
+    const btn = document.getElementById('mcqSubmitBtn');
+    btn.classList.remove('submitted');
+    btn.textContent = '✓ Submit All';
+    btn.disabled = false;
+  }
+
+  buildMcqs();
+  attachEvents();
 }
 renderVaccinatorMcqs();
 </script>
